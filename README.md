@@ -14,6 +14,11 @@ This repository is the **agent-facing layer** of a five-component stack, not the
 whole system. Skills, slash commands and CLIs live here; the Traust engine, the ledger, the contracts, and the SDK are separately
 versioned repositories, installed as pip dependencies pinned by git tag.
 
+- [traust-engine](https://github.com/openshift/traust-engine) — scanner adapters, corpus, metrics, reporting, validation
+- [traust-ledger](https://github.com/openshift/traust-ledger) — finding identity, Merkle integrity, signing, ledger writes
+- [traust-contracts](https://github.com/openshift/traust-contracts) — schemas, enums, shared models
+- [traust-sdk](https://github.com/openshift/traust-sdk) — typed SDKs for invoking Traust workflows
+
 ```
   traust     skills, slash commands, agent-facing CLIs   ← this repo
         ▼
