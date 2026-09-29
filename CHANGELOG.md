@@ -2,6 +2,16 @@
 
 All notable changes to Traust are documented here.
 
+## [0.12.0]
+
+- **`config/object-store.example.yaml`** is a draft template for
+  `object-store.yaml`: where storage/v1 keeps artifact bytes (S3 or
+  S3-compatible), now that storage/v1 records only digests and sizes. The
+  schema is traust-contracts `config/v1/object-store.schema.json`
+  (traust-contracts #22). The template holds no credentials.
+  - `install_traust` does not copy it, because a placeholder bucket would make
+    every storage save fail. It prints how to opt in instead.
+
 ## [0.11.1]
 
 - **Stage-7 patch evidence is findable from `/patch`.** `remediate-finding`

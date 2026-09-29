@@ -1,0 +1,36 @@
+# object-store.yaml — where storage/v1 keeps artifact bytes.
+#
+# Copy to $TRAUST_CONFIG_HOME/object-store.yaml and fill in. Schema:
+# traust-contracts config/v1/object-store.schema.json.
+#
+# storage/v1 records only each artifact's digest and byte size; the bytes are
+# kept in this bucket under <prefix>sha256/<digest>. Without this file,
+# artifact bytes are not retained and typed reads are unavailable.
+#
+# NO CREDENTIALS here. The schema rejects keys such as secret_access_key.
+# Readers and writers take credentials from the environment (AWS_* or
+# MINIO_* variables) or from the workload's identity (for example an IAM
+# role), so this file can be committed to the deployment config repository.
+
+backend: s3
+
+# AWS S3: set region and omit endpoint.
+region: us-east-1
+# S3-compatible stores (ODF/Ceph RGW, MinIO): set host[:port], no scheme.
+# endpoint: s3.example.internal:443
+
+bucket: example-traust-artifacts
+
+# Optional key prefix, ending in /, so several environments can share a bucket.
+prefix: prod/
+
+# TLS is on by default. Disable only for a local test endpoint.
+tls: true
+
+# Server-side encryption: bucket-default | sse-s3 | sse-kms (needs kms_key_id).
+encryption:
+  mode: sse-s3
+  # kms_key_id: <KMS key id or ARN>
+
+# Largest artifact a reader accepts. Readers default to 64 MiB.
+# max_object_bytes: 67108864

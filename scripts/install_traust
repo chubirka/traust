@@ -163,6 +163,12 @@ do_install() {
       cp "$TEMPLATE_DIR/$f" "$CONFIG_HOME/$f"; ok "wrote $f (copy of the shipped file)"; copied=$((copied+1))
     fi
   done
+  # object-store.yaml is opt-in, never copied: a placeholder bucket would make
+  # every storage save fail (bytes are written before the binding commits).
+  if [[ ! -f "$CONFIG_HOME/object-store.yaml" ]]; then
+    info "object-store.yaml (optional): copy $TEMPLATE_DIR/object-store.example.yaml here and"
+    info "  set your bucket to retain storage/v1 artifact bytes; without it they are not kept."
+  fi
   if [[ ! -f "$CONFIG_HOME/ledger-signing-key.pub" ]]; then
     warn "ledger-signing-key.pub: no template can stand in for a key — generate your own:"
     sed -n 's/^# \{0,1\}//p' "$TEMPLATE_DIR/ledger-signing-key.example.pub" | sed 's/^/      /'

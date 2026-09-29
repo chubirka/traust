@@ -49,6 +49,7 @@ ships a template for each such file:
 | `export.example.yaml` | `export.yaml` | the one-shot public export (public forge URL, private URLs to rewrite, build plumbing to strip, CHANGELOG cut) |
 | `internal-vocabulary.example.yaml` | `internal-vocabulary.yaml` | `scan_internal_refs` |
 | `ledger-signing-key.example.pub` | `ledger-signing-key.pub` | `traust_engine.reporting.validate`, `/drift-watch` signature check |
+| `object-store.example.yaml` | `object-store.yaml` | storage/v1 readers and writers: where artifact bytes live (S3 or S3-compatible). Holds no credentials. Opt-in: `install_traust` does not copy it, because a placeholder bucket would make every save fail |
 
 ### How the harness finds the deployment directory
 

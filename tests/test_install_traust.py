@@ -30,10 +30,17 @@ def test_noninteractive_install_copies_every_copyable_template(tmp_path):
     r = _run(["--yes", "--config-home", str(home), "--no-toolchain", "--no-profile-write"])
     assert r.returncode == 0, r.stdout + r.stderr
     written = sorted(p.name for p in home.iterdir())
-    # every non-key template, plus the three shipped-as-is filled defaults
-    # (model-registry + the MANIFEST-required feeds/external-tools).
+    # every template except the key and the opt-in object store, plus the three
+    # shipped-as-is filled defaults (model-registry + the MANIFEST-required
+    # feeds/external-tools). A copied object-store placeholder would point
+    # every storage save at a bucket that does not exist.
+    opt_in = {"object-store.example.yaml"}
     expected = sorted(
-        [t.name.replace(".example", "") for t in TEMPLATES if not t.name.endswith(".pub")]
+        [
+            t.name.replace(".example", "")
+            for t in TEMPLATES
+            if not t.name.endswith(".pub") and t.name not in opt_in
+        ]
         + ["model-registry.yaml", "feeds.yaml", "external-tools.yaml"]
     )
     for shipped in ("model-registry.yaml", "feeds.yaml", "external-tools.yaml"):
@@ -42,6 +49,9 @@ def test_noninteractive_install_copies_every_copyable_template(tmp_path):
     # the key template is instructions, never copied as a key
     assert not (home / "ledger-signing-key.pub").exists()
     assert "ledger-signing-key.pub" in r.stdout
+    # the object store is opt-in: never written, but the installer says how
+    assert not (home / "object-store.yaml").exists()
+    assert "object-store.example.yaml" in r.stdout
 
 
 def test_install_never_overwrites_without_force(tmp_path):
