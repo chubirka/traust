@@ -460,7 +460,7 @@ class TestBuildCumulative(unittest.TestCase):
         with tempfile.TemporaryDirectory() as td:
             p = Path(td) / "test-findings-layer.json"
             p.write_text(json.dumps(layer), encoding="utf-8")
-            client = LedgerClient(token="test-token", data_dir=td)
+            client = LedgerClient(data_dir=td)
             client.sign("test-findings-layer")
             meta = json.loads(p.read_text())["metadata"]
         self.assertEqual(meta["merkle_epoch"], 0)

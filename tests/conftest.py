@@ -64,6 +64,39 @@ def _resolve_progress_tracker() -> Path:
 )
 os.environ["TRAUST_CONFIG_HOME"] = str(_TEST_HOME)
 os.environ["HARNESS_TEST_FIXTURE_CONFIG"] = "1"
+
+# A hermetic ledger identity for the session. Since traust-ledger 0.8 the SDK
+# VERIFIES the caller's token when it signs or appends to a layer, so tests can
+# no longer lean on whatever credential the machine happens to hold (a
+# developer's stored `ledger auth login` OIDC token is rejected without an OIDC
+# provider, and CI holds none). The suite mints a real locally-signed machine
+# token under a session HOME. Whether requires_ledger tests run still depends
+# only on a LAAS_TOKEN the caller set, as before.
+if "TRAUST_TEST_USER_HOME" in os.environ:
+    # A pytest-xdist worker: it inherits the controller's environment, so reuse
+    # the controller's session HOME (where the token's JWKS lives) and its record
+    # of whether the caller supplied LAAS_TOKEN, rather than minting afresh.
+    _TEST_USER_HOME = Path(os.environ["TRAUST_TEST_USER_HOME"])
+    _CALLER_LAAS_TOKEN = os.environ.get("TRAUST_TEST_CALLER_LAAS_TOKEN") == "1"
+else:
+    _CALLER_LAAS_TOKEN = bool(os.environ.get("LAAS_TOKEN"))
+    os.environ["TRAUST_TEST_CALLER_LAAS_TOKEN"] = "1" if _CALLER_LAAS_TOKEN else "0"
+    _REAL_HOME = Path.home()
+    os.environ.setdefault("GRYPE_DB_CACHE_DIR", str(_REAL_HOME / ".cache" / "grype" / "db"))
+    os.environ.setdefault(
+        "OSV_SCANNER_LOCAL_DB_CACHE_DIRECTORY", str(_REAL_HOME / ".cache" / "osv-scanner")
+    )
+    _TEST_USER_HOME = Path(tempfile.mkdtemp(prefix="traust-app-test-home-"))
+    os.environ["TRAUST_TEST_USER_HOME"] = str(_TEST_USER_HOME)
+    if not _CALLER_LAAS_TOKEN:
+        from traust_ledger.auth.local import ensure_local_keypair, mint_local_token
+
+        os.environ["LAAS_TOKEN"] = mint_local_token(
+            "traust-tests",
+            ensure_local_keypair(_TEST_USER_HOME / ".config" / "traust-ledger"),
+            machine=True,
+        )
+os.environ["HOME"] = str(_TEST_USER_HOME)
 assert _TEST_HOME.resolve() != TRAUST_CONFIG_HOME_DEFAULT.resolve(), (
     "test suite must not inherit ~/.traust/config"
 )
@@ -119,7 +152,7 @@ for path in SKILL_SCRIPT_DIRS:
     if entry not in sys.path:
         sys.path.insert(0, entry)
 
-_has_laas_token = bool(os.environ.get("LAAS_TOKEN"))
+_has_laas_token = bool(_CALLER_LAAS_TOKEN)
 
 
 @pytest.fixture(autouse=True)

@@ -143,7 +143,7 @@ def _fixture(tmp: Path) -> Path:
     # Stamp Merkle metadata so this is a realistic already-signed ledger: the
     # SDK countersign verb appends to a rooted layer (valid_epoch gate), exactly
     # as production layers are — the triage/validation emitters sign on write.
-    LedgerClient(token="test-token", data_dir=str(d)).sign("t-findings-layer")
+    LedgerClient(data_dir=str(d)).sign("t-findings-layer")
     return d / "t-findings-layer.json"
 
 

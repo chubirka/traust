@@ -24,7 +24,7 @@ def stamp_layer(layer: dict) -> None:
     with tempfile.TemporaryDirectory() as td:
         p = Path(td) / "fixture-findings-layer.json"
         p.write_text(json.dumps(layer), encoding="utf-8")
-        LedgerClient(token="test-token", data_dir=td).sign("fixture-findings-layer")
+        LedgerClient(data_dir=td).sign("fixture-findings-layer")
         stamped = json.loads(p.read_text())
     layer["metadata"] = stamped["metadata"]
 

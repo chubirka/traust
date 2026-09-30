@@ -18,6 +18,7 @@ The schemas below (from the installed `traust-contracts` package) are the comple
 | `schemas/v1/verification.schema.json` | JSON Schema for remediation-verification reports |
 | `schemas/v1/impact-analysis.schema.json` | JSON Schema for CVE impact-analysis artifacts |
 | `schemas/v1/layer.schema.json` | JSON Schema for findings-disposition layers (track-findings ledger) |
+| `schemas/v1/refuted-register.schema.json` | JSON Schema for the refuted-finding register: triage or validation refutations kept, integrity-bound, for later execution evidence and countersign |
 | `schemas/v1/threat-model.schema.json` | JSON Schema for one subject's threat model. The authored artifact is Markdown (`<repo>-threat-model.md`); this is its contract form (`<repo>-threat-model.json`), emitted alongside it by `traust reporting threat-model-json` and projected into the `threat` table |
 | `schemas/v1/corpus-registry.schema.json` | JSON Schema for the corpus ownership registry — the subject→owner/business-unit mapping that every denominator divides by |
 | `schemas/v1/operator-priv-profile.schema.json` | JSON Schema for per-operator least-privilege profiles (`*-priv-profile.json`), parsed from shipped manifests — declared state, never a live cluster read |

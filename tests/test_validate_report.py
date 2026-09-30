@@ -1018,7 +1018,7 @@ def _stamp_via_client(layer: dict) -> dict:
     with tempfile.TemporaryDirectory() as td:
         p = Path(td) / "fixture-findings-layer.json"
         p.write_text(json.dumps(layer), encoding="utf-8")
-        LedgerClient(token="test-token", data_dir=td).sign("fixture-findings-layer")
+        LedgerClient(data_dir=td).sign("fixture-findings-layer")
         return json.loads(p.read_text())
 
 
@@ -1147,7 +1147,12 @@ class TestLayerValidation(unittest.TestCase):
                 l["events"][0]["source"]["ref"], l["events"][0]["finding_ref"], None, None
             )
 
-        result = self._mutate(mutate)
+        # traust-ledger 0.8 refuses to sign an empty rationale, so build the bad
+        # layer the way a hand-edited or foreign file would arrive: signed, then
+        # altered. The cross-check must still catch it on its own.
+        layer = _stamp_via_client(_valid_layer())
+        mutate(layer)
+        result = _layer_cross(layer)
         self.assertTrue(any("requires a rationale" in e for e in result.errors), result.errors)
 
     def test_machine_false_positive_allowed_without_ldap(self):

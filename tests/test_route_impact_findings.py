@@ -69,7 +69,6 @@ def _mock_ledger_service():
                 stamp_report_reference(layer, str(report_path))
             layer_path.write_text(json.dumps(layer, indent=2) + "\n", encoding="utf-8")
             LedgerClient(
-                token="test-token",
                 data_dir=str(layer_path.parent),
             ).sign(layer_path.stem)
 
