@@ -5,8 +5,8 @@ All notable changes to Traust are documented here.
 ## [0.12.0]
 
 - **Dependencies caught up.** traust-contracts v0.44.0, traust-ledger v0.8.2,
-  traust-engine 0.17.0 (pinned to the traust-engine #14 commit until that PR is
-  tagged). Ledger 0.8 verifies the caller's token when it signs or appends, so
+  traust-engine 0.17.0 (pinned to its main commit `1fb19dc` until it is
+  tagged `v0.17.0`). Ledger 0.8 verifies the caller's token when it signs or appends, so
   the test suite now mints a locally-signed machine token under a session
   `HOME` (shared with pytest-xdist workers) instead of passing a placeholder
   `token="test-token"`. The empty-rationale layer test builds its bad layer
